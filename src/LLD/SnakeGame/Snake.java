@@ -22,8 +22,11 @@ public class Snake {
         return body.peekFirst();
     }
 
-    public boolean isCollision(Point newHead) {
-        return bodySet.contains(newHead);
+    public boolean isCollision(Point newHead, boolean grow) {
+        if (!bodySet.contains(newHead)) {
+            return false;
+        }
+        return grow || !newHead.equals(body.peekLast());
     }
 
     public void move(Point newHead, boolean grow) {

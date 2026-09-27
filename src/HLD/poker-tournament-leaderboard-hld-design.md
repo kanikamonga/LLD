@@ -411,7 +411,33 @@ This becomes wasteful because most players may not change chips in every interva
 
 Every scheduler run creates a burst of DB reads and Redis writes.
 
-As tournaments increase, these spikes become larger and harder to control.
+With a scheduler, work happens in synchronized intervals:
+
+```text
+00:00 -> query active players, sort, write Redis
+00:05 -> query active players, sort, write Redis
+00:10 -> query active players, sort, write Redis
+```
+
+So the DB and Redis are mostly quiet between runs, then suddenly receive a bulk read/write burst.
+
+At larger scale:
+
+```text
+5,000 players * 10 tournaments = 50,000 rows every 5 seconds
+```
+
+The issue is not only the total rows scanned. The issue is that many tournaments may be rebuilt at the same time, creating synchronized load spikes that can compete with gameplay writes.
+
+This can cause:
+
+- DB CPU and I/O spikes.
+- Redis write bursts.
+- Scheduler overlap if one run takes longer than the interval.
+- Slower hand-result writes if read load competes with game updates.
+- Wasted work by recomputing unchanged players.
+
+Per-tournament schedulers can reduce the blast radius and allow staggering, but event-driven updates are still more efficient because they update only changed entries.
 
 ## 7.2 Full recomputation is wasteful
 
@@ -648,6 +674,102 @@ Why this matters:
 - Preserves re-entry history.
 - Keeps final standings auditable.
 - Avoids mixing old busted stack with new active stack.
+
+## 10.1 Redis active player map
+
+In addition to the Redis sorted set, keep an active player map in Redis for fast rank lookup.
+
+Leaderboard sorted set:
+
+```text
+leaderboard:{tournamentId}:active
+```
+
+Type:
+
+```text
+Sorted Set
+```
+
+Member:
+
+```text
+entryId
+```
+
+Score:
+
+```text
+current_chips
+```
+
+Active player map:
+
+```text
+active_entry:{tournamentId}:{playerId} -> entryId
+```
+
+Type:
+
+```text
+String
+```
+
+Example:
+
+```text
+SET active_entry:tour_1:player_123 entry_2
+ZADD leaderboard:tour_1:active 10000 entry_2
+```
+
+This lets the API quickly find the player's current active tournament entry before doing rank lookup.
+
+Rank lookup:
+
+```text
+GET active_entry:{tournamentId}:{playerId}
+  -> entryId
+
+ZREVRANK leaderboard:{tournamentId}:active entryId
+  -> zero-based rank
+
+ZSCORE leaderboard:{tournamentId}:active entryId
+  -> current chips
+```
+
+On bust-out:
+
+```text
+DEL active_entry:{tournamentId}:{playerId}
+ZREM leaderboard:{tournamentId}:active {entryId}
+```
+
+On re-entry:
+
+```text
+SET active_entry:{tournamentId}:{playerId} {newEntryId}
+ZADD leaderboard:{tournamentId}:active {reentryStack} {newEntryId}
+```
+
+Important:
+
+> The active player map is also a derived Redis cache, not the source of truth. It must be rebuildable from `tournament_entries`.
+
+Rebuild query:
+
+```sql
+SELECT player_id, entry_id
+FROM tournament_entries
+WHERE tournament_id = ?
+  AND status = 'ACTIVE';
+```
+
+During scheduler rebuild or Redis recovery, rebuild both:
+
+```text
+leaderboard:{tournamentId}:active
+active_entry:{tournamentId}:{playerId}
+```
 
 ---
 

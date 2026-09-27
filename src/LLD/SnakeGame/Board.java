@@ -18,4 +18,8 @@ public class Board {
     public Point getRandomPoint() {
         return new Point(rand.nextInt(height), rand.nextInt(width));
     }
+
+    public int getArea() {
+        return height * width;
+    }
 }
