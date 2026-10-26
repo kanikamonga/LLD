@@ -267,6 +267,8 @@ Do not insert components automatically.
 
 Every component must have a reason.
 
+When creating or updating Markdown HLD design documents, use **PNG images for major diagrams** in addition to any text diagrams. Generate the PNG files under a repository `docs/` directory, reference them from the Markdown with relative image links, and keep the text diagram or explanation nearby for readability and easy review.
+
 ---
 
 ## Step 6 — Critical Flows

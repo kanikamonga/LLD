@@ -183,13 +183,33 @@ If the scheduler remains the primary leaderboard update mechanism, implement it 
 
 Do not run one global rebuild blindly.
 
-Better: use a **different scheduler task for each active tournament**.
+Better: use a **different scheduler task for each tournament that has actually started**.
+
+The scheduler should be enabled from the tournament start state:
+
+```text
+SCHEDULED / REGISTRATION_OPEN
+        |
+        v
+STARTED / RUNNING  -> start leaderboard scheduler for this tournament
+        |
+        v
+PAUSED             -> optionally pause or slow leaderboard scheduler
+        |
+        v
+FINALIZING         -> stop live leaderboard scheduler
+        |
+        v
+COMPLETED          -> final standings are served from DB
+```
+
+Do not run leaderboard rebuilds for tournaments that are only scheduled or open for registration but not started, because no live chip leaderboard exists yet.
 
 ```text
 Tournament Scheduler Coordinator
         |
         v
-Find ACTIVE tournaments
+Find tournaments in STARTED/RUNNING state
         |
         v
 Create one rebuild task per tournament
@@ -207,7 +227,7 @@ Per-tournament scheduler loop:
 
 ```text
 Every 5 seconds:
-  for each ACTIVE tournament:
+  for each tournament where status in (STARTED, RUNNING):
       acquire lock: lock:leaderboard:{tournamentId}
       if lock acquired:
           rebuild leaderboard for that tournament
@@ -220,7 +240,7 @@ Benefits:
 - Failure isolation.
 - Parallelism.
 - Easier locking.
-- Can skip inactive tournaments.
+- Can skip tournaments that are not started, paused, finalizing, or completed.
 - One slow tournament does not delay all other tournaments.
 - Failed rebuilds can be retried only for the affected tournament.
 - DB and Redis load is spread across smaller independent jobs.
@@ -234,6 +254,20 @@ Why this is better than one global scheduler:
 | Larger DB/Redis spike | Smaller isolated workloads |
 | Harder to scale workers | Tournaments can be distributed across workers |
 | Harder to pause completed tournaments | Inactive tournaments can be skipped |
+
+Recommended trigger:
+
+```text
+TournamentStarted event
+  -> create/enable scheduler task for tournamentId
+  -> initialize Redis keys from tournament_entries
+  -> start periodic rebuild loop
+
+TournamentFinalizing/TournamentCompleted event
+  -> stop scheduler task for tournamentId
+  -> preserve or archive final live leaderboard snapshot
+  -> serve official standings from tournament_standings DB table
+```
 
 ## 5.2 Use per-tournament distributed lock
 
@@ -607,12 +641,14 @@ Redis update:
 
 ```text
 ZADD leaderboard:tour_456:active 15400 entry_999
+SET player_chips:tour_456:entry_999 15400
 ```
 
 If resulting chips are zero:
 
 ```text
 ZREM leaderboard:tour_456:active entry_999
+SET player_chips:tour_456:entry_999 0
 ```
 
 Recommendation:
@@ -675,9 +711,13 @@ Why this matters:
 - Keeps final standings auditable.
 - Avoids mixing old busted stack with new active stack.
 
-## 10.1 Redis active player map
+## 10.1 Redis active player map and chip cache
 
-In addition to the Redis sorted set, keep an active player map in Redis for fast rank lookup.
+In addition to the Redis sorted set, keep these Redis keys for fast rank and chip lookups:
+
+1. Active leaderboard sorted set.
+2. Active player-to-entry map.
+3. Current player chip cache.
 
 Leaderboard sorted set:
 
@@ -715,14 +755,35 @@ Type:
 String
 ```
 
+Current player chip cache:
+
+```text
+player_chips:{tournamentId}:{entryId} -> currentChips
+```
+
+Type:
+
+```text
+String or Hash
+```
+
 Example:
 
 ```text
 SET active_entry:tour_1:player_123 entry_2
 ZADD leaderboard:tour_1:active 10000 entry_2
+SET player_chips:tour_1:entry_2 10000
 ```
 
-This lets the API quickly find the player's current active tournament entry before doing rank lookup.
+This lets the API quickly find the player's current active tournament entry and current chip count before doing rank lookup.
+
+The chip cache is useful for:
+
+- Fast player chip display.
+- Avoiding DB reads for each rank lookup.
+- Showing current stack on table/tournament UI.
+- Cross-checking the sorted-set score.
+- Rebuilding UI state after reconnect.
 
 Rank lookup:
 
@@ -730,11 +791,14 @@ Rank lookup:
 GET active_entry:{tournamentId}:{playerId}
   -> entryId
 
+GET player_chips:{tournamentId}:{entryId}
+  -> current chips
+
 ZREVRANK leaderboard:{tournamentId}:active entryId
   -> zero-based rank
 
 ZSCORE leaderboard:{tournamentId}:active entryId
-  -> current chips
+  -> current chips from leaderboard score
 ```
 
 On bust-out:
@@ -742,6 +806,7 @@ On bust-out:
 ```text
 DEL active_entry:{tournamentId}:{playerId}
 ZREM leaderboard:{tournamentId}:active {entryId}
+SET player_chips:{tournamentId}:{entryId} 0
 ```
 
 On re-entry:
@@ -749,16 +814,17 @@ On re-entry:
 ```text
 SET active_entry:{tournamentId}:{playerId} {newEntryId}
 ZADD leaderboard:{tournamentId}:active {reentryStack} {newEntryId}
+SET player_chips:{tournamentId}:{newEntryId} {reentryStack}
 ```
 
 Important:
 
-> The active player map is also a derived Redis cache, not the source of truth. It must be rebuildable from `tournament_entries`.
+> The active player map and current chip cache are also derived Redis caches, not the source of truth. They must be rebuildable from `tournament_entries`.
 
 Rebuild query:
 
 ```sql
-SELECT player_id, entry_id
+SELECT player_id, entry_id, current_chips
 FROM tournament_entries
 WHERE tournament_id = ?
   AND status = 'ACTIVE';
@@ -769,6 +835,7 @@ During scheduler rebuild or Redis recovery, rebuild both:
 ```text
 leaderboard:{tournamentId}:active
 active_entry:{tournamentId}:{playerId}
+player_chips:{tournamentId}:{entryId}
 ```
 
 ---
@@ -817,8 +884,8 @@ Flow:
 
 ```text
 entryId = GET active_entry:{tournamentId}:{playerId}
+chips = GET player_chips:{tournamentId}:{entryId}
 rank = ZREVRANK leaderboard:{tournamentId}:active entryId
-chips = ZSCORE leaderboard:{tournamentId}:active entryId
 ```
 
 Redis rank is zero-based:
@@ -1052,7 +1119,9 @@ If Redis is lost:
 1. Read active tournament entries from DB.
 2. For each active entry:
       ZADD leaderboard:{tournamentId}:active current_chips entryId
-3. Rebuild active_entry mappings.
+      SET active_entry:{tournamentId}:{playerId} entryId
+      SET player_chips:{tournamentId}:{entryId} current_chips
+3. Rebuild leaderboard, active_entry mappings, and player_chips cache.
 ```
 
 Query:
@@ -1153,7 +1222,7 @@ Handling:
 |---|---|---|
 | Players | 2k/tournament, 5 tournaments | 5k+ players, 10+ tournaments |
 | Ranking update | Scheduler/rebuild acceptable | Event-driven from chip events |
-| Redis structure | Sorted set per tournament | Sorted set per tournament, sharded by tournament if needed |
+| Redis structure | Sorted set + active-entry map + chip cache per tournament | Sorted set + active-entry map + chip cache, sharded by tournament if needed |
 | Source of truth | DB | DB + append-only chip event log |
 | Event bus | Optional | Kafka/Pulsar recommended |
 | Recovery | Rebuild Redis from DB | Rebuild from DB or replay event log |
@@ -1169,7 +1238,8 @@ Handling:
 
 ## Phase 1: Improve current scheduler
 
-- Run a separate scheduler task per active tournament instead of one global rebuild.
+- Run a separate scheduler task per tournament once it enters `STARTED/RUNNING` state instead of one global rebuild.
+- Start scheduler on `TournamentStarted`; stop it on `TournamentFinalizing` or `TournamentCompleted`.
 - Add per-tournament distributed lock.
 - Use Redis sorted set per tournament.
 - Use temp Redis key and atomic rename.
@@ -1180,7 +1250,8 @@ Handling:
   ```
 - Use `entryId` as Redis member.
 - Add `active_entry:{tournamentId}:{playerId}` mapping.
-- Skip inactive, paused, completed, or unchanged tournaments.
+- Add `player_chips:{tournamentId}:{entryId}` chip cache.
+- Skip scheduled, registration-only, paused, finalizing, completed, or unchanged tournaments.
 
 ## Phase 2: Add dirty-version optimization
 
@@ -1191,6 +1262,7 @@ Handling:
 ## Phase 3: Add event-driven Redis updates
 
 - After each hand, update Redis for changed entries.
+- Update both the sorted-set score and `player_chips` cache from `resultingChips`.
 - Keep scheduler every 5-10 minutes for reconciliation only.
 
 ## Phase 4: Add outbox and Kafka

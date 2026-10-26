@@ -7,13 +7,26 @@
     <option name="selectedModelId" value="gpt-5.5" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a247dc72-0870-4332-afc5-2d3f9fbbf6df" name="Changes" comment="">
+    <list default="true" id="a247dc72-0870-4332-afc5-2d3f9fbbf6df" name="Changes" comment="Add Atlassian N-ary tree LCA solution">
+      <change afterPath="$PROJECT_DIR$/.github/skills/astro-skill.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/LLD/Java_Exception_Handling_Interview_Notes.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/LLD/java_core_interview_concepts.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/skills/hld-interview-coach/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/.github/skills/hld-interview-coach/SKILL.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DSA/Apple/SentenceGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DSA/Apple/SentenceGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HLD/poker-tournament-leaderboard-hld-design.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/HLD/poker-tournament-leaderboard-hld-design.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="module" />
+      <option value="repository" />
+    </option>
   </component>
   <component name="CopilotPersistence">
     <persistenceIdMap>
@@ -42,7 +55,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/kanikamonga/LLD.git&quot;,
+    &quot;url&quot;: &quot;https://kanikamonga@github.com/kanikamonga/LLD.git&quot;,
     &quot;accountId&quot;: &quot;1d299065-8747-4255-bcec-82676979929e&quot;
   }
 }</component>
@@ -120,7 +133,7 @@
         <option name="model">
           <model>
             <option name="modelType" value="builtin_id" />
-            <option name="modelValue" value="gpt-5.5" />
+            <option name="modelValue" value="gpt-6.1-sol" />
           </model>
         </option>
         <option name="targetType" value="BACKGROUND" />
@@ -132,47 +145,47 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.BabylonGame.executor": "Run",
-    "Application.BuildOrderFromDependencies.executor": "Debug",
-    "Application.BuildOrderTopo.executor": "Run",
-    "Application.CountCloseTriples.executor": "Debug",
-    "Application.CountVisiblePeopleWithObserverHeightTransparency.executor": "Run",
-    "Application.DSA.Apple.CountVisiblePeopleWithObserverHeightTransparency.executor": "Run",
-    "Application.DeleteAndEarn.executor": "Debug",
-    "Application.EqualPartitionWithMods.executor": "Run",
-    "Application.GoodArithmeticSequence.executor": "Debug",
-    "Application.LexicographicallySmallestDigitString.executor": "Run",
-    "Application.OddEvenPrinter.executor": "Run",
-    "Application.StringConversionBySwaps.executor": "Debug",
-    "Application.ValidMaxLongestWord.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/test/IdeaProjects/LLD/.github/skills",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.jshint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.jshint": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "httpClient"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.BabylonGame.executor&quot;: &quot;Run&quot;,
+    &quot;Application.BuildOrderFromDependencies.executor&quot;: &quot;Debug&quot;,
+    &quot;Application.BuildOrderTopo.executor&quot;: &quot;Run&quot;,
+    &quot;Application.CountCloseTriples.executor&quot;: &quot;Debug&quot;,
+    &quot;Application.CountVisiblePeopleWithObserverHeightTransparency.executor&quot;: &quot;Run&quot;,
+    &quot;Application.DSA.Apple.CountVisiblePeopleWithObserverHeightTransparency.executor&quot;: &quot;Run&quot;,
+    &quot;Application.DeleteAndEarn.executor&quot;: &quot;Debug&quot;,
+    &quot;Application.EqualPartitionWithMods.executor&quot;: &quot;Run&quot;,
+    &quot;Application.GoodArithmeticSequence.executor&quot;: &quot;Debug&quot;,
+    &quot;Application.LexicographicallySmallestDigitString.executor&quot;: &quot;Run&quot;,
+    &quot;Application.OddEvenPrinter.executor&quot;: &quot;Run&quot;,
+    &quot;Application.StringConversionBySwaps.executor&quot;: &quot;Debug&quot;,
+    &quot;Application.ValidMaxLongestWord.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/test/IdeaProjects/LLD/src/LLD&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/.github/skills" />
       <recent name="$PROJECT_DIR$/src/LLD" />
+      <recent name="$PROJECT_DIR$/.github/skills" />
       <recent name="C:\Users\kanikamonga\OneDrive - Microsoft\MyProjects\LLD" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -258,8 +271,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-a203e0a19954-intellij.indexing.shared.core-IU-262.10315.125" />
-        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.10315.125" />
+        <option value="bundled-jdk-30f59d01ecdd-a203e0a19954-intellij.indexing.shared.core-IU-262.10968.63" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.10968.63" />
       </set>
     </attachedChunks>
   </component>
@@ -286,6 +299,12 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Implement complete Snake Game food and collision behavior&#10;&#10;- Add problem statement to SnakeGame&#10;- Add N x N constructor support&#10;- Add Food and FoodType for normal and power food&#10;- Make every-5-moves growth optional via constructor flag&#10;- Spawn food only on valid non-snake coordinates&#10;- Spawn new food after snake movement to avoid new head overlap&#10;- Fix self-collision handling when moving into the current tail&#10;- Fix initial snake placement for minimum board sizes" />
+    <MESSAGE value="Add Atlassian N-ary tree LCA solution&#10;&#10;Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;" />
+    <MESSAGE value="Add Atlassian N-ary tree LCA solution" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Atlassian N-ary tree LCA solution" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
