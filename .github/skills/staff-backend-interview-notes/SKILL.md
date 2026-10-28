@@ -62,6 +62,18 @@ Every important claim should answer at least one of:
 
 ---
 
+## SAVE NOTES TO THE REPOSITORY
+
+Whenever this skill generates interview-prep notes, also save the notes as a Markdown file in the repository's `notes/` directory.
+
+1. Use the current repository's `notes/` directory; create it if it does not exist.
+2. Name the file using a descriptive, lowercase kebab-case topic slug, followed by `-staff-backend-notes.md`. For example: `kafka-fundamentals-staff-backend-notes.md`.
+3. Before creating a file, check whether a matching topic note already exists. If it does, update that file rather than creating a duplicate, preserving relevant existing material.
+4. Save the complete generated notes, including examples, tables, and the quick revision section. Keep the file readable Markdown.
+5. After saving, tell the user the relative file path. If the file cannot be created or updated, state that clearly rather than implying it was saved.
+
+---
+
 ## DEFAULT NOTE STRUCTURE
 
 For each requested topic, generate notes using this structure unless the user asks for a different format.

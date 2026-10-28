@@ -1,4 +1,4 @@
-package DSA;
+package DSA.Apple;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;

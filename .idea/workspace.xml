@@ -4,17 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackgroundAgentGlobalSettings">
-    <option name="selectedModelId" value="gpt-5.5" />
+    <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a247dc72-0870-4332-afc5-2d3f9fbbf6df" name="Changes" comment="Add Atlassian N-ary tree LCA solution">
-      <change afterPath="$PROJECT_DIR$/.github/skills/astro-skill.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/LLD/Java_Exception_Handling_Interview_Notes.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/LLD/java_core_interview_concepts.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/skills/hld-interview-coach/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/.github/skills/hld-interview-coach/SKILL.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/skills/staff-backend-interview-notes/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/.github/skills/staff-backend-interview-notes/SKILL.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DSA/Apple/SentenceGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DSA/Apple/SentenceGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HLD/poker-tournament-leaderboard-hld-design.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/HLD/poker-tournament-leaderboard-hld-design.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DSA/LongIteratorSum.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DSA/Apple/LongIteratorSum.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,43 +141,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.BabylonGame.executor&quot;: &quot;Run&quot;,
-    &quot;Application.BuildOrderFromDependencies.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.BuildOrderTopo.executor&quot;: &quot;Run&quot;,
-    &quot;Application.CountCloseTriples.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.CountVisiblePeopleWithObserverHeightTransparency.executor&quot;: &quot;Run&quot;,
-    &quot;Application.DSA.Apple.CountVisiblePeopleWithObserverHeightTransparency.executor&quot;: &quot;Run&quot;,
-    &quot;Application.DeleteAndEarn.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.EqualPartitionWithMods.executor&quot;: &quot;Run&quot;,
-    &quot;Application.GoodArithmeticSequence.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.LexicographicallySmallestDigitString.executor&quot;: &quot;Run&quot;,
-    &quot;Application.OddEvenPrinter.executor&quot;: &quot;Run&quot;,
-    &quot;Application.StringConversionBySwaps.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.ValidMaxLongestWord.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/test/IdeaProjects/LLD/src/LLD&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.BabylonGame.executor": "Run",
+    "Application.BuildOrderFromDependencies.executor": "Debug",
+    "Application.BuildOrderTopo.executor": "Run",
+    "Application.CountCloseTriples.executor": "Debug",
+    "Application.CountVisiblePeopleWithObserverHeightTransparency.executor": "Run",
+    "Application.DSA.Apple.CountVisiblePeopleWithObserverHeightTransparency.executor": "Run",
+    "Application.DeleteAndEarn.executor": "Debug",
+    "Application.EqualPartitionWithMods.executor": "Run",
+    "Application.GoBoardCapture.executor": "Run",
+    "Application.GoodArithmeticSequence.executor": "Debug",
+    "Application.LexicographicallySmallestDigitString.executor": "Run",
+    "Application.OddEvenPrinter.executor": "Run",
+    "Application.StringConversionBySwaps.executor": "Debug",
+    "Application.ValidMaxLongestWord.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/test/IdeaProjects/LLD/src/LLD",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.jshint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.jshint": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/LLD" />
@@ -192,7 +189,7 @@
       <recent name="$PROJECT_DIR$/src/HLD" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.OddEvenPrinter">
+  <component name="RunManager" selected="Application.GoBoardCapture">
     <configuration name="BuildOrderFromDependencies" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="DSA.Amazon.BuildOrderFromDependencies" />
       <module name="LLD" />
@@ -206,12 +203,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CountCloseTriples" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="DSA.Google.CountCloseTriples" />
+    <configuration name="DeleteAndEarn" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="DSA.Amazon.DeleteAndEarn" />
       <module name="LLD" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="DSA.Google.*" />
+          <option name="PATTERN" value="DSA.Amazon.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -219,12 +216,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="DeleteAndEarn" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="DSA.Amazon.DeleteAndEarn" />
+    <configuration name="GoBoardCapture" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="DSA.Apple.GoBoardCapture" />
       <module name="LLD" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="DSA.Amazon.*" />
+          <option name="PATTERN" value="DSA.Apple.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -260,11 +257,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.GoBoardCapture" />
         <item itemvalue="Application.OddEvenPrinter" />
         <item itemvalue="Application.DeleteAndEarn" />
         <item itemvalue="Application.BuildOrderFromDependencies" />
         <item itemvalue="Application.LexicographicallySmallestDigitString" />
-        <item itemvalue="Application.CountCloseTriples" />
       </list>
     </recent_temporary>
   </component>
