@@ -78,6 +78,18 @@ A heap dump can be captured with `jcmd <pid> GC.heap_dump <path>`, subject to JD
 
 Heap dumps can be large, may pause or stress the process, and can contain credentials or personal data. Protect them as sensitive production data and capture them using an approved procedure.
 
+### When to take a heap dump
+
+Take a dump when evidence points to retained heap objects and you need to identify their owners:
+
+- After warm-up, capture a baseline; capture another after the live set has grown under comparable workload.
+- During a reproducible incident, capture before a restart if operationally safe. Prefer an affected instance that can be drained without losing service capacity.
+- Configure `-XX:+HeapDumpOnOutOfMemoryError` and a suitable `-XX:HeapDumpPath` in advance when appropriate. This captures evidence for supported JVM out-of-memory failures; it is not guaranteed for a container OOM kill, disk exhaustion, or every native-memory failure.
+
+Check free disk, process-impact expectations, permissions, and sensitive-data handling first. Heap-dump commands may request a full GC depending on their options and JDK; inspect the command help for the target runtime.
+
+Do not take a heap dump simply because a request is slow. For blocked threads, CPU hotspots, or dependency latency, traces, repeated thread dumps, and a bounded JFR recording are usually more useful first.
+
 ### Step 4: Find what retains the objects
 
 Use a heap analyzer such as Eclipse MAT, VisualVM, YourKit, or JProfiler to inspect:
