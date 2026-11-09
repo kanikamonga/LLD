@@ -44,10 +44,10 @@ public final class InventoryMonitor implements AutoCloseable {
 
     public static void verify(List<Warehouse.ShelfSnapshot> snapshot) {
         for (Warehouse.ShelfSnapshot shelf : snapshot) {
-            shelf.products().forEach((product, stock) -> {
+            shelf.getProducts().forEach((product, stock) -> {
                 if (!stock.isConsistent()) {
                     throw new IllegalStateException("Inconsistent inventory on shelf "
-                            + shelf.shelfId() + ", product " + product + ": " + stock);
+                            + shelf.getShelfId() + ", product " + product + ": " + stock);
                 }
             });
         }

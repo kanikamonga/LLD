@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -19,19 +20,112 @@ public final class Warehouse {
         private final Map<String, Stock> products = new HashMap<>();
     }
 
-    private record Stock(long quantity, long restocked, long fulfilled) {
+    private static final class Stock {
+        private final long quantity;
+        private final long restocked;
+        private final long fulfilled;
+
+        private Stock(long quantity, long restocked, long fulfilled) {
+            this.quantity = quantity;
+            this.restocked = restocked;
+            this.fulfilled = fulfilled;
+        }
+
+        private long getQuantity() {
+            return quantity;
+        }
+
+        private long getRestocked() {
+            return restocked;
+        }
+
+        private long getFulfilled() {
+            return fulfilled;
+        }
     }
 
-    public record StockSnapshot(long quantity, long restocked, long fulfilled) {
+    public static final class StockSnapshot {
+        private final long quantity;
+        private final long restocked;
+        private final long fulfilled;
+
+        public StockSnapshot(long quantity, long restocked, long fulfilled) {
+            this.quantity = quantity;
+            this.restocked = restocked;
+            this.fulfilled = fulfilled;
+        }
+
+        public long getQuantity() {
+            return quantity;
+        }
+
+        public long getRestocked() {
+            return restocked;
+        }
+
+        public long getFulfilled() {
+            return fulfilled;
+        }
+
         public boolean isConsistent() {
             return quantity >= 0 && fulfilled >= 0 && restocked >= fulfilled
                     && quantity == restocked - fulfilled;
         }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            if (!(other instanceof StockSnapshot)) return false;
+            StockSnapshot stock = (StockSnapshot) other;
+            return quantity == stock.quantity && restocked == stock.restocked
+                    && fulfilled == stock.fulfilled;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(quantity, restocked, fulfilled);
+        }
+
+        @Override
+        public String toString() {
+            return "StockSnapshot[quantity=" + quantity + ", restocked=" + restocked
+                    + ", fulfilled=" + fulfilled + "]";
+        }
     }
 
-    public record ShelfSnapshot(int shelfId, Map<String, StockSnapshot> products) {
-        public ShelfSnapshot {
-            products = Map.copyOf(products);
+    public static final class ShelfSnapshot {
+        private final int shelfId;
+        private final Map<String, StockSnapshot> products;
+
+        public ShelfSnapshot(int shelfId, Map<String, StockSnapshot> products) {
+            this.shelfId = shelfId;
+            this.products = Map.copyOf(products);
+        }
+
+        public int getShelfId() {
+            return shelfId;
+        }
+
+        public Map<String, StockSnapshot> getProducts() {
+            return products;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            if (!(other instanceof ShelfSnapshot)) return false;
+            ShelfSnapshot shelf = (ShelfSnapshot) other;
+            return shelfId == shelf.shelfId && products.equals(shelf.products);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(shelfId, products);
+        }
+
+        @Override
+        public String toString() {
+            return "ShelfSnapshot[shelfId=" + shelfId + ", products=" + products + "]";
         }
     }
 
@@ -64,8 +158,8 @@ public final class Warehouse {
         try {
             Stock current = shelf.products.getOrDefault(productId, new Stock(0, 0, 0));
             // Construct the replacement before mutating; overflow cannot partially update stock.
-            Stock updated = new Stock(Math.addExact(current.quantity(), quantity),
-                    Math.addExact(current.restocked(), quantity), current.fulfilled());
+            Stock updated = new Stock(Math.addExact(current.getQuantity(), quantity),
+                    Math.addExact(current.getRestocked(), quantity), current.getFulfilled());
             shelf.products.put(productId, updated);
         } finally {
             shelf.lock.unlock();
@@ -97,11 +191,11 @@ public final class Warehouse {
                 for (Map.Entry<String, Long> line : lines.get(id).entrySet()) {
                     Stock current = shelf.products.getOrDefault(line.getKey(), new Stock(0, 0, 0));
                     long requested = line.getValue();
-                    if (current.quantity() < requested) {
-                        throw new InsufficientStockException(id, line.getKey(), requested, current.quantity());
+                    if (current.getQuantity() < requested) {
+                        throw new InsufficientStockException(id, line.getKey(), requested, current.getQuantity());
                     }
-                    updated.put(line.getKey(), new Stock(current.quantity() - requested,
-                            current.restocked(), Math.addExact(current.fulfilled(), requested)));
+                    updated.put(line.getKey(), new Stock(current.getQuantity() - requested,
+                            current.getRestocked(), Math.addExact(current.getFulfilled(), requested)));
                 }
                 replacements.put(id, updated);
             }
@@ -134,7 +228,7 @@ public final class Warehouse {
             for (int id = 0; id < shelves.size(); id++) {
                 Map<String, StockSnapshot> products = new HashMap<>();
                 shelves.get(id).products.forEach((product, stock) -> products.put(product,
-                        new StockSnapshot(stock.quantity(), stock.restocked(), stock.fulfilled())));
+                        new StockSnapshot(stock.getQuantity(), stock.getRestocked(), stock.getFulfilled())));
                 result.add(new ShelfSnapshot(id, products));
             }
             return List.copyOf(result);

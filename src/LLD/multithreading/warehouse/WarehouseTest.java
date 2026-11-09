@@ -19,6 +19,7 @@ public final class WarehouseTest {
         concurrentWorkAndMonitoring();
         lastStockCannotBeSoldTwice();
         detectsInconsistentSnapshot();
+        snapshotClassesPreserveValueSemantics();
         System.out.println("All warehouse tests passed");
     }
 
@@ -34,10 +35,10 @@ public final class WarehouseTest {
             equal(before, warehouse.snapshot());
         }
         warehouse.fulfillOrder(Map.of(0, Map.of("a", 5L), 1, Map.of("b", 1L)));
-        equal(5L, warehouse.snapshot().get(0).products().get("a").quantity());
-        equal(0L, warehouse.snapshot().get(1).products().get("b").quantity());
+        equal(5L, warehouse.snapshot().get(0).getProducts().get("a").getQuantity());
+        equal(0L, warehouse.snapshot().get(1).getProducts().get("b").getQuantity());
         // A snapshot remains unchanged after subsequent operations.
-        equal(10L, before.get(0).products().get("a").quantity());
+        equal(10L, before.get(0).getProducts().get("a").getQuantity());
     }
 
     private static void validatesAndHandlesOverflow() throws Exception {
@@ -87,8 +88,8 @@ public final class WarehouseTest {
             for (int i = 0; i < 100; i++) {
                 List<Warehouse.ShelfSnapshot> snapshot = warehouse.snapshot();
                 InventoryMonitor.verify(snapshot);
-                equal(snapshot.get(0).products().get("a").fulfilled(),
-                        snapshot.get(1).products().get("b").fulfilled());
+                equal(snapshot.get(0).getProducts().get("a").getFulfilled(),
+                        snapshot.get(1).getProducts().get("b").getFulfilled());
             }
             return null;
         });
@@ -106,10 +107,10 @@ public final class WarehouseTest {
         List<Warehouse.ShelfSnapshot> result = warehouse.snapshot();
         InventoryMonitor.verify(result);
         for (Warehouse.ShelfSnapshot shelf : result) {
-            Warehouse.StockSnapshot stock = shelf.products().values().iterator().next();
-            equal(600L, stock.quantity());
-            equal(1_400L, stock.restocked());
-            equal(800L, stock.fulfilled());
+            Warehouse.StockSnapshot stock = shelf.getProducts().values().iterator().next();
+            equal(600L, stock.getQuantity());
+            equal(1_400L, stock.getRestocked());
+            equal(800L, stock.getFulfilled());
         }
     }
 
@@ -137,6 +138,29 @@ public final class WarehouseTest {
             throw new AssertionError("Expected consistency failure");
         } catch (IllegalStateException expected) {
             // The monitor must report a broken ledger rather than repair it silently.
+        }
+
+    }
+
+    private static void snapshotClassesPreserveValueSemantics() {
+        Warehouse.StockSnapshot stock = new Warehouse.StockSnapshot(8, 10, 2);
+        Warehouse.StockSnapshot equivalent = new Warehouse.StockSnapshot(8, 10, 2);
+        equal(stock, equivalent);
+        equal(stock.hashCode(), equivalent.hashCode());
+        Map<String, Warehouse.StockSnapshot> products = new LinkedHashMap<>();
+        products.put("a", stock);
+        Warehouse.ShelfSnapshot shelf = new Warehouse.ShelfSnapshot(0, products);
+        products.clear();
+        equal(0, shelf.getShelfId());
+        equal(Map.of("a", stock), shelf.getProducts());
+        Warehouse.ShelfSnapshot sameShelf = new Warehouse.ShelfSnapshot(0, Map.of("a", equivalent));
+        equal(shelf, sameShelf);
+        equal(shelf.hashCode(), sameShelf.hashCode());
+        try {
+            shelf.getProducts().clear();
+            throw new AssertionError("Snapshot products must be immutable");
+        } catch (UnsupportedOperationException expected) {
+            // External callers cannot change snapshot contents.
         }
     }
 

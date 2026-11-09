@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 /** Dependency-free tests for averages, lifecycle, key collisions, and concurrency. */
 public final class UndergroundSystemTest {
     public static void main(String[] args) throws Exception {
+        domainObjectsEnforceInvariants();
         UndergroundSystem system = new UndergroundSystem();
         system.checkIn(1, "A", 10);
         system.checkIn(2, "A", 20);
@@ -45,6 +46,47 @@ public final class UndergroundSystemTest {
         concurrentTrips();
         concurrentDuplicateCheckIn();
         System.out.println("All underground system tests passed");
+    }
+
+    private static void domainObjectsEnforceInvariants() {
+        Station start = new Station("A");
+        Station end = new Station("B");
+        Route route = new Route(start, end);
+        Route equivalent = new Route(new Station("A"), new Station("B"));
+        equal(route.hashCode(), equivalent.hashCode());
+        if (!route.getStart().getName().equals("A") || !route.getEnd().getName().equals("B")) {
+            throw new AssertionError("Route getters must preserve station names");
+        }
+        if (!route.equals(new Route(new Station("A"), new Station("B")))
+                || route.equals(new Route(end, start))) {
+            throw new AssertionError("Routes must have directed value equality");
+        }
+        ActiveTrip active = new ActiveTrip(start, 10);
+        CompletedTrip completed = active.complete(end, 30);
+        if (!completed.getRoute().equals(route)) {
+            throw new AssertionError("Completion must preserve the route");
+        }
+        equal(20, completed.getDurationMinutes());
+        equal(10, active.getCheckInTime());
+        if (!active.getStartStation().equals(start)
+                || !active.equals(new ActiveTrip(new Station("A"), 10))
+                || !completed.equals(new CompletedTrip(equivalent, 20))) {
+            throw new AssertionError("Trip classes must preserve value equality");
+        }
+        expect(IllegalArgumentException.class, () -> active.complete(end, 10));
+        expect(IllegalArgumentException.class, () -> new CompletedTrip(route, -1));
+        expect(NullPointerException.class, () -> new Route(start, null));
+        expect(NullPointerException.class, () -> new ActiveTrip(null, 10));
+
+        RouteStatistics empty = new RouteStatistics();
+        RouteStatistics first = empty.addDuration(20);
+        RouteStatistics second = first.addDuration(30);
+        expect(IllegalStateException.class, empty::average);
+        expect(IllegalArgumentException.class, () -> first.addDuration(0));
+        equal(20, first.average()); // Adding a trip must not mutate previous statistics.
+        equal(25, second.average());
+        equal(Long.MAX_VALUE, empty.addDuration(Long.MAX_VALUE)
+                .addDuration(Long.MAX_VALUE).average());
     }
 
     private static void concurrentTrips() throws Exception {
